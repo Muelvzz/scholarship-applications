@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 export default function LandingPage() {
     return (
         <>
-            <div class='flex flex-col h-screen px-5 py-5 bg-linear-to-r from-gray-400 to-gray-900 items-center justify-center'>
+            <div class='flex flex-col h-screen bg-linear-to-r from-gray-400 to-gray-900 items-center justify-center'>
                 <div>
                     <h1 class='text-7xl font-bold'>Scholars PH</h1>
                 </div>
