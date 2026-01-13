@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../services/api"
+import Feedback from "../../components/Feedback"
 
 export default function Login() {
 
@@ -8,7 +9,9 @@ export default function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
+    
+    const [status, setStatus] = useState('')
+    const [message, setMessage] = useState('')
 
     const handleEmail = (e) => {
         setEmail(() => e.target.value)
@@ -20,7 +23,6 @@ export default function Login() {
 
     const handleSubmit = async () => {
         event.preventDefault()
-        setError('')
 
         try {
             const formData = new URLSearchParams
@@ -36,9 +38,13 @@ export default function Login() {
             setEmail("")
             setPassword("")
 
-            navigate('/home')
+            setStatus('success')
+            setMessage('Login Successful')
+
+            setTimeout(() => navigate('/home'), 1500)
         } catch (err) {
-            setError('Invalid email or password')
+            setStatus('error')
+            setMessage('Invalid Credentials')
         }
     }
 
@@ -46,6 +52,10 @@ export default function Login() {
         <>
             <div class='flex flex-col h-screen bg-gray-800 items-center justify-center'>
                 <div>
+                    <Feedback 
+                        status={ status }
+                        message={ message }
+                    />
                     <form 
                         class='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'
                         onSubmit={ handleSubmit }
