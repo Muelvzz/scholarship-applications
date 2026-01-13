@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import api from "../../services/api"
 
 export default function Login() {
 
@@ -7,30 +8,43 @@ export default function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
 
     const handleEmail = (e) => {
-        e.preventDefault()
         setEmail(() => e.target.value)
     }
 
     const handlePassword = (e) => {
-        e.preventDefault()
         setPassword(() => e.target.value)
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(`email: ${email}, password: ${password}`)
+    const handleSubmit = async () => {
+        event.preventDefault()
+        setError('')
 
-        setEmail("")
-        setPassword("")
+        try {
+            const formData = new URLSearchParams
+            
+            formData.append('username', email)
+            formData.append('password', password)
 
-        navigate('/home')
+            const response = await api.post('/auth/login', formData)
+            const { access_token } = response.data
+
+            localStorage.setItem('access_token', access_token)
+
+            setEmail("")
+            setPassword("")
+
+            navigate('/home')
+        } catch (err) {
+            setError('Invalid email or password')
+        }
     }
 
     return (
         <>
-            <div class='flex flex-col h-screen bg-linear-to-r from-gray-400 to-gray-900 items-center justify-center'>
+            <div class='flex flex-col h-screen bg-gray-800 items-center justify-center'>
                 <div>
                     <form 
                         class='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'

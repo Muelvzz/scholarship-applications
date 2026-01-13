@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 export default function LandingPage() {
     return (
         <>
-            <div class='flex flex-col h-screen bg-linear-to-r from-gray-400 to-gray-900 items-center justify-center'>
+            <div class="flex flex-col h-screen bg-gray-800 items-center justify-center bg-[url('/cap.png')] bg-no-repeat bg-center">
                 <div>
-                    <h1 class='text-7xl font-bold'>Scholars PH</h1>
+                    <h1 class='text-8xl font-bold text-white'>Scholars PH</h1>
                 </div>
                 <div>
-                    <h3 class='italic font-semibold underline'>"Scholarship Application for College Students"</h3>
+                    <h3 class='italic font-semibold underline text-white'>"Scholarship Application for College Students"</h3>
                 </div>
                 <div class='mt-8 gap-5 flex justify-center'>
                     <div>

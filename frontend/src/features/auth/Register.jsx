@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import api from "../../services/api"
 
 export default function Register() {
 
@@ -11,45 +12,57 @@ export default function Register() {
     const [lastName, setLastName] = useState('')
     const [password, setPassword] = useState('')
 
+    const [error, setError] = useState('')
+
+    async function registerUser(registerData) {
+        const res = await api.post('/auth/register', registerData)
+    }
+
     const handleEmail = (e) => {
-        e.preventDefault()
         setEmail(() => e.target.value)
     }
 
     const handleFirstName = (e) => {
-        e.preventDefault()
         setFirstName(() => e.target.value)
     }
 
     const handleLastName = (e) => {
-        e.preventDefault()
         setLastName(() => e.target.value)
     }
 
     const handlePassword = (e) => {
-        e.preventDefault()
         setPassword(() => e.target.value)
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(`
-            email: ${email}, 
-            firstName: ${firstName}, 
-            lastName: ${lastName}, 
-            password: ${password}`)
+    const handleSubmit = () => {
+        event.preventDefault()
+        setError('')
 
-        setEmail("")
-        setFirstName("")
-        setLastName("")
-        setPassword("")
+        try {
+            const registerData = {
+                email: email, 
+                first_name: firstName, 
+                last_name: lastName, 
+                password: password,
+            }
 
-        navigate('/home')
+            registerUser(registerData)
+
+            setEmail("")
+            setFirstName("")
+            setLastName("")
+            setPassword("")
+
+            navigate('/login')
+            console.log('Registration Successful...')
+        } catch (err) {
+            console.err('Email already exist')
+        }
     }
 
     return (
         <>
-            <div class='flex flex-col h-screen bg-linear-to-r from-gray-400 to-gray-900 items-center justify-center'>
+            <div class='flex flex-col h-screen bg-gray-800 items-center justify-center'>
                 <div>
                     <form 
                         class='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'
