@@ -50,34 +50,34 @@ export default function Login() {
 
     return (
         <>
-            <div class='flex flex-col h-screen bg-gray-800 items-center justify-center'>
+            <div className='flex flex-col h-screen bg-gray-800 items-center justify-center'>
                 <div>
                     <Feedback 
                         status={ status }
                         message={ message }
                     />
                     <form 
-                        class='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'
+                        className='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'
                         onSubmit={ handleSubmit }
                     >
-                        <label class='font-semibold'>Email:</label>
+                        <label className='font-semibold'>Email:</label>
                         <input 
-                            class='border rounded-[0.5vw] py-0.75 px-1' 
+                            className='border rounded-[0.5vw] py-0.75 px-1' 
                             type="text" 
                             placeholder="Enter your email..."
                             onChange={ handleEmail }
                             value={ email }
                         />
-                        <label class='font-semibold'>Password:</label>
+                        <label className='font-semibold'>Password:</label>
                         <input 
-                            class='border rounded-[0.5vw] py-0.75 px-1' 
+                            className='border rounded-[0.5vw] py-0.75 px-1' 
                             type="password" 
                             placeholder="Enter your password"
                             onChange={ handlePassword }
                             value={ password }
                         />
                         <button 
-                            class='cursor-pointer text-white py-2 font-bold rounded-[0.5vw] text-center bg-black'
+                            className='cursor-pointer text-white py-2 font-bold rounded-[0.5vw] text-center bg-black'
                         >Login</button>
                     </form>
                 </div>

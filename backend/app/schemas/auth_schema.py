@@ -15,6 +15,7 @@ class UserCreate(BaseModel):
     first_name: str
     last_name: str
     password: str
+    role: str = 'user'
 
 
 class UserOut(BaseModel):

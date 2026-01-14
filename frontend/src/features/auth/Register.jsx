@@ -16,10 +16,6 @@ export default function Register() {
     const [status, setStatus] = useState('idle')
     const [message, setMessage] = useState('')
 
-    async function registerUser(registerData) {
-        const res = await api.post('/auth/register', registerData)
-    }
-
     const handleEmail = (e) => {
         setEmail(() => e.target.value)
     }
@@ -36,7 +32,7 @@ export default function Register() {
         setPassword(() => e.target.value)
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         event.preventDefault()
 
         try {
@@ -47,7 +43,7 @@ export default function Register() {
                 password: password,
             }
 
-            registerUser(registerData)
+            await api.post('/auth/register', registerData)
 
             setEmail("")
             setFirstName("")
@@ -59,8 +55,13 @@ export default function Register() {
 
             setTimeout(() => navigate('/login'), 1500)
         } catch (err) {
-            setStatus('error')
-            setMessage('Email already exists')
+            if (err.response?.status === 400) {
+                setStatus('error')
+                setMessage(err.response.data.detail)
+            } else {
+                setStatus('error')
+                setMessage('Email already exists')
+            }
         }
     }
 

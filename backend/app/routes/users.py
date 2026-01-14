@@ -47,7 +47,7 @@ def register(user: auth_schema.UserCreate, db: Session = Depends(get_db)):
 
     if existing_user:
         raise HTTPException(status_code=400, detail='Email already exists')
-    
+
     hashed_password = get_password_hash(user.password)
     db_user = User(
         email=user.email,
