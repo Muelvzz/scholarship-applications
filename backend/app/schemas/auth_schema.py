@@ -3,11 +3,13 @@ from datetime import datetime
 
 class Token(BaseModel):
     access_token: str
+    role: str
     token_type: str
 
 
 class TokenData(BaseModel):
     email: str | None = None
+    role: str | None = None
 
 
 class UserCreate(BaseModel):
@@ -23,6 +25,7 @@ class UserOut(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
+    role: str
     created_at: datetime
 
     class Config:

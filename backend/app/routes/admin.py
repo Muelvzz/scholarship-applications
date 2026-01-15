@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from ..core.database import get_db, SessionLocal
-from ..core.auth import get_password_hash
+from ..core.auth import get_password_hash, super_admin_required
 from ..models.models import User
 
 load_dotenv()
@@ -46,3 +46,11 @@ def create_initial_superadmin():
 @router.on_event('startup')
 def startup():
     create_initial_superadmin()
+
+@router.get('/me')
+def get_me(current_user: User = Depends(super_admin_required)):
+    return {
+        'id': current_user.id,
+        'email': current_user.email,
+        'role': current_user.role
+    }

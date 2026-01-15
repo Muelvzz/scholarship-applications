@@ -31,9 +31,10 @@ export default function Login() {
             formData.append('password', password)
 
             const response = await api.post('/auth/login', formData)
-            const { access_token } = response.data
+            const { access_token, role } = response.data
 
             localStorage.setItem('access_token', access_token)
+            localStorage.setItem('role', role)
 
             setEmail("")
             setPassword("")
@@ -41,7 +42,12 @@ export default function Login() {
             setStatus('success')
             setMessage('Login Successful')
 
-            setTimeout(() => navigate('/home'), 1500)
+            if (role === 'superadmin') {
+                setTimeout(() => navigate('/superadmin'), 1500)
+            } else {
+                setTimeout(() => navigate('/home'), 1500)
+            }
+
         } catch (err) {
             setStatus('error')
             setMessage('Invalid Credentials')

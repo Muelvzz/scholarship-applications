@@ -31,12 +31,16 @@ async def login(
     access_token = create_access_token(
         data = {
             'sub': user.email,
+            'role': user.role
         },
         expires_delta = access_token_expires
     )
 
+    existing_user = db.query(User).filter(User.email == user.email).first()
+
     return {
         'access_token': access_token,
+        'role': existing_user.role,
         'token_type': 'bearer'
     }
 

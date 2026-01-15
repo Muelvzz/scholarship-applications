@@ -13,7 +13,7 @@ from ..models.models import User
 
 load_dotenv()
 password_hash = PasswordHash.recommended()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login')
 
 def verify_password(plain_password, hashed_password):
     return password_hash.verify(plain_password, hashed_password)
@@ -66,11 +66,13 @@ async def get_current_user(
 
     try:
         payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[os.getenv('ALGORITHM')])
+
         email = payload.get('sub')
+        role = payload.get('role')
 
         if email is None:
             raise credentials_exception
-        token_data = TokenData(email=email)
+        token_data = TokenData(email=email, role=role)
 
     except jwt.InvalidTokenError:
         raise credentials_exception
@@ -86,5 +88,14 @@ async def get_current_user(
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail='Inactive user')
+    
+    return current_user
+
+
+async def super_admin_required(
+        current_user: Annotated[User, Depends(get_current_user)]
+):
+    if current_user.role != 'superadmin':
+        raise HTTPException(status_code=403, detail='Superadmin only')
     
     return current_user
