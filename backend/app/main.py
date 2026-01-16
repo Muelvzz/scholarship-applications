@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from app.core.database import engine, Base
-from app.routes import users
-from app.routes import admin
+from .routes import login_register, scholarship, admin
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from slowapi import Limiter
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -20,5 +23,9 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(users.router)
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+
+app.include_router(login_register.router)
 app.include_router(admin.router)
+app.include_router(scholarship.router)

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from contextlib import contextmanager
 from dotenv import load_dotenv
-import os
+import os, logging
 
 from ..core.database import get_db, SessionLocal
 from ..core.auth import get_password_hash, super_admin_required
@@ -14,31 +15,50 @@ router = APIRouter(
     prefix='/admin'
 )
 
-def create_initial_superadmin():
+logger = logging.getLogger(__name__)
 
+@contextmanager
+def get_session():
     db = SessionLocal()
 
     try:
-        superadmin_exists = db.query(User).filter(User.role == 'superadmin').first()
+        yield db
+        db.commit()
 
-        if not superadmin_exists:
-        
-            first_name = os.getenv('SUPERADMIN_FIRSTNAME')
-            last_name = os.getenv('SUPERADMIN_LASTNAME')
-            email = os.getenv('SUPERADMIN_EMAIL')
-            hashed_password = get_password_hash(os.getenv('SUPERADMIN_PASSWORD'))
-            role = 'superadmin'
+    except Exception as e:
+        db.rollback()
+        logger.error(f'Session error: {str(e)}')
+        raise
 
-            db_user = User(
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-                password=hashed_password,
-                role=role,
-            )
+    finally:
+        db.close()
 
-            db.add(db_user)
-            db.commit()
+
+def create_initial_superadmin():
+
+    try:
+        with get_session() as db:
+
+            superadmin_exists = db.query(User).filter(User.role == 'superadmin').first()
+
+            if not superadmin_exists:
+            
+                first_name = os.getenv('SUPERADMIN_FIRSTNAME')
+                last_name = os.getenv('SUPERADMIN_LASTNAME')
+                email = os.getenv('SUPERADMIN_EMAIL')
+                hashed_password = get_password_hash(os.getenv('SUPERADMIN_PASSWORD'))
+                role = 'superadmin'
+
+                db_user = User(
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    password=hashed_password,
+                    role=role,
+                )
+
+                db.add(db_user)
+                db.commit()
 
     finally:
         db.close()

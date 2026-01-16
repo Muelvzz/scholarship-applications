@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from dotenv import load_dotenv
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 import os
 
 from ..core.database import get_db
@@ -13,12 +15,16 @@ from ..models.models import User
 load_dotenv()
 
 router = APIRouter(
-    tags=['Authentication'],
+    tags=['Login and Register'],
     prefix='/auth'
 )
 
+limiter = Limiter(key_func=get_remote_address)
+
 @router.post('/login', response_model=auth_schema.Token)
+@limiter.limit('5/minute')
 async def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
@@ -36,11 +42,9 @@ async def login(
         expires_delta = access_token_expires
     )
 
-    existing_user = db.query(User).filter(User.email == user.email).first()
-
     return {
         'access_token': access_token,
-        'role': existing_user.role,
+        'role': user.role,
         'token_type': 'bearer'
     }
 
@@ -53,10 +57,11 @@ def register(user: auth_schema.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail='Email already exists')
 
     hashed_password = get_password_hash(user.password)
+    
     db_user = User(
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
+        email=user.email.lower(),
+        first_name=user.first_name.strip(),
+        last_name=user.last_name.strip(),
         password=hashed_password,
     )
 

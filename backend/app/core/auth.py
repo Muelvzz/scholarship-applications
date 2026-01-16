@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from ..schemas.auth_schema import TokenData, UserCreate
 from ..core.database import get_db
 from ..models.models import User
+from ..core.config import settings
 
 load_dotenv()
 password_hash = PasswordHash.recommended()
@@ -24,11 +25,11 @@ def get_password_hash(password):
 
 
 def get_user(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first()
+    return db.query(User).filter(User.email == email.lower()).first()
 
 
 def authenticate_user(db, email: str, password: str):
-    user = get_user(db, email)
+    user = get_user(db, email.lower())
 
     if not user:
         return False
@@ -45,10 +46,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
         expire = datetime.now(timezone.utc) + expires_delta
 
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', 30)))
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode.update({'exp': expire})
-    encoded_jwt = jwt.encode(to_encode, os.getenv('SECRET_KEY'), algorithm=os.getenv('ALGORITHM'))
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     return encoded_jwt
 
@@ -65,7 +66,7 @@ async def get_current_user(
     )
 
     try:
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[os.getenv('ALGORITHM')])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
 
         email = payload.get('sub')
         role = payload.get('role')
@@ -85,11 +86,11 @@ async def get_current_user(
     return user
 
 
-async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail='Inactive user')
+# async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
+#     if current_user.disabled:
+#         raise HTTPException(status_code=400, detail='Inactive user')
     
-    return current_user
+#     return current_user
 
 
 async def super_admin_required(
