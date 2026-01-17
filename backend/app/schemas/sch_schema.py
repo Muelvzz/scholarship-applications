@@ -40,6 +40,7 @@ class ScholarshipOut(BaseModel):
     description: str
     link: str
     created_at: datetime
+    updated_at: datetime
     deadline: date | None = None
     documentary_requirements: list[str]
     eligibility_requirements: list[str]
@@ -56,3 +57,13 @@ class ScholarshipPaginationResponse(BaseModel):
     total: int
     skip: int
     limit: int
+
+    class Config:
+        from_attributes = True
+
+
+class SuccessMessage(BaseModel):
+    detail: str
+
+    class Config:
+        from_attributes = True

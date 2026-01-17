@@ -1,3 +1,6 @@
+# This file is important in the developer perspective to view past errors
+# days or even weeks ago
+
 import logging
 import logging.handlers
 from pathlib import Path

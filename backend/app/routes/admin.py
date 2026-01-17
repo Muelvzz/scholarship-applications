@@ -17,6 +17,7 @@ router = APIRouter(
 
 logger = logging.getLogger(__name__)
 
+# This is to ensure that there is no resource leaks that is going to happen when accessing the database.
 @contextmanager
 def get_session():
     db = SessionLocal()
@@ -34,6 +35,7 @@ def get_session():
         db.close()
 
 
+# This is crucial for production/deployment
 def create_initial_superadmin():
 
     try:
