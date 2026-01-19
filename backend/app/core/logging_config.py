@@ -5,13 +5,15 @@ import logging
 import logging.handlers
 from pathlib import Path
 
-Path('logs').mkdir(exist_ok=True)
+LOG_DIR = Path('backend/logs')
+
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 logger = logging.getLogger('scholar_ph')
 logger.setLevel(logging.DEBUG)
 
 file_handler = logging.handlers.RotatingFileHandler(
-    'logs/app.log',
+    f'{LOG_DIR}/app.log',
     maxBytes=19485760,
     backupCount=10
 )

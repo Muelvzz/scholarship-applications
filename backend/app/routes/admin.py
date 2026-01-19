@@ -7,6 +7,7 @@ import os, logging
 from ..core.database import get_db, SessionLocal
 from ..core.auth import get_password_hash, super_admin_required
 from ..models.models import User
+from ..core.logging_config import logger
 
 load_dotenv()
 
@@ -14,8 +15,6 @@ router = APIRouter(
     tags=['Admin'],
     prefix='/admin'
 )
-
-logger = logging.getLogger(__name__)
 
 # This is to ensure that there is no resource leaks that is going to happen when accessing the database.
 @contextmanager

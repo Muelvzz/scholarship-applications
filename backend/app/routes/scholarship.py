@@ -15,8 +15,6 @@ router = APIRouter(
     prefix='/scholarship'
 )
 
-logger = logging.getLogger(__name__)
-
 
 def get_scholarship_or_404(db: Session, scholarship_id: int) -> Scholarships:
     """Helper function to fetch a scholarship or raise 404 exception."""
@@ -49,12 +47,17 @@ async def create_scholarship(
     
     except IntegrityError as e:
         db.rollback()
+
+        logger.warning(f'Create scholarship failed: {e.detail}')
         if 'title' in str(e.orig):
             raise HTTPException(status_code=400, detail='Scholarship Title already exists')
         elif 'link' in str(e.orig):
             raise HTTPException(status_code=400, detail='Scholarship Title already exists')
         else:
             raise HTTPException(status_code=400, detail='Scholarship Title already exists')
+        
+    except HTTPException as e:
+        logger.warning(f'Create scholarship failed: {e.detail}')
         
     except SQLAlchemyError as e:
         db.rollback()
@@ -114,6 +117,11 @@ async def update_scholarship(
         
         logger.info(f'Scholarship updated: {scholarship_id}')
         return scholarship_data
+    
+    except HTTPException as e:
+        logger.warning(
+            f'Updated scholarship {scholarship_id} failed: {e.detail}'
+        )
         
     except SQLAlchemyError as e:
         db.rollback()
@@ -135,6 +143,12 @@ async def delete_scholarship(
         
         logger.info(f'Scholarship deleted: {scholarship_id}')
         return {'detail': 'Scholarship Deleted'}
+    
+    except HTTPException as e:
+        logger.warning(
+            f'Deleted scholarship {scholarship_id} failed: {e.detail}'
+        )
+        raise
     
     except SQLAlchemyError as e:
         db.rollback()

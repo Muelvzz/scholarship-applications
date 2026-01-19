@@ -11,6 +11,7 @@ from ..core.database import get_db
 from ..schemas import auth_schema
 from ..core.auth import authenticate_user, create_access_token, get_password_hash
 from ..models.models import User
+from ..core.logging_config import logger
 
 load_dotenv()
 
@@ -42,6 +43,8 @@ async def login(
         expires_delta = access_token_expires
     )
 
+    logger.info(f'User {form_data.username} logged')
+
     return {
         'access_token': access_token,
         'role': user.role,
@@ -68,5 +71,7 @@ def register(user: auth_schema.UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    logger.info('User {form_data.username} created')
 
     return db_user
