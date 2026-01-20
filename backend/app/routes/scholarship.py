@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -7,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..core.database import get_db
 from ..schemas.sch_schema import ScholarshipCreate, ScholarshipOut, ScholarshipPaginationResponse, SuccessMessage
 from ..models.models import User, Scholarships
-from ..core.auth import super_admin_required
+from ..core.auth import admin_required, super_admin_required, admin_or_superadmin_required
 from ..core.logging_config import logger
 
 router = APIRouter(
@@ -26,7 +25,7 @@ def get_scholarship_or_404(db: Session, scholarship_id: int) -> Scholarships:
 @router.post('/', response_model=ScholarshipOut)
 async def create_scholarship(
     scholarship_data: ScholarshipCreate, 
-    current_user: User = Depends(super_admin_required), 
+    current_user: User = Depends(admin_or_superadmin_required), 
     db: Session = Depends(get_db)
 ):
     from sqlalchemy.exc import IntegrityError
@@ -96,11 +95,42 @@ async def read_scholarships(
         raise HTTPException(status_code=500, detail='Database error occured')
     
 
+@router.get('/{user_id}', response_model=ScholarshipPaginationResponse)
+async def read_scholarships_by_id(
+    user_id: int,
+    current_user: User = Depends(admin_required),
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10
+):
+    if skip < 0 or limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail='Invalid pagination parameters')
+    
+    try:
+        total = db.query(Scholarships).count()
+        scholarships = db.query(Scholarships).filter(Scholarships.user_id == user_id).offset(skip).limit(limit).all()
+
+        if not scholarships and skip > 0:
+            raise HTTPException(status_code=404, detail='Page not found')
+        
+        return {
+            'data': scholarships,
+            'total': total,
+            'skip': skip,
+            'limit': limit,
+        }
+    
+    except SQLAlchemyError as e:
+        logger.error(f'Database error: {str(e)}')
+
+        raise HTTPException(status_code=500, detail='Database error occured')
+    
+
 @router.put('/{scholarship_id}', response_model=ScholarshipOut)
 async def update_scholarship(
     scholarship_id: int,
     update_scholarship_data: ScholarshipCreate,
-    current_user: User = Depends(super_admin_required),
+    current_user: User = Depends(admin_or_superadmin_required),
     db: Session = Depends(get_db)
 ):
     try:
@@ -132,7 +162,7 @@ async def update_scholarship(
 @router.delete('/{scholarship_id}', response_model=SuccessMessage)
 async def delete_scholarship(
     scholarship_id: int,
-    current_user: User = Depends(super_admin_required),
+    current_user: User = Depends(admin_or_superadmin_required),
     db: Session = Depends(get_db)
 ):
     try:

@@ -79,7 +79,7 @@ def view_users(
 ):
     if skip < 0 or limit < 1 or limit > 100:
         raise HTTPException(status_code=400, detail='Invalid pagination parameters')
-    
+
     try:
         total = db.query(User).count()
         users_data = db.query(User).offset(skip).limit(limit).all()

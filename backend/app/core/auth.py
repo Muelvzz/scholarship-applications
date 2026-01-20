@@ -1,5 +1,5 @@
-import os, jwt
-from fastapi import FastAPI, Depends, HTTPException, status
+import jwt
+from fastapi import Depends, HTTPException, status
 from pwdlib import PasswordHash
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, datetime, timezone
@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from typing import Annotated
 from sqlalchemy.orm import Session
 
-from ..schemas.auth_schema import TokenData, UserCreate
+from ..schemas.auth_schema import TokenData
 from ..core.database import get_db
 from ..models.models import User
 from ..core.config import settings
@@ -93,10 +93,20 @@ async def get_current_user(
 #     return current_user
 
 
-async def super_admin_required(
-        current_user: Annotated[User, Depends(get_current_user)]
-):
+async def super_admin_required(current_user: Annotated[User, Depends(get_current_user)]):
     if current_user.role != 'superadmin':
         raise HTTPException(status_code=403, detail='Superadmin only')
+    
+    return current_user
+
+async def admin_required(current_user: Annotated[User, Depends(get_current_user)]):
+    if current_user.role != 'admin':
+        raise HTTPException(status_code=403, detail='Admin only')
+    
+    return current_user
+
+async def admin_or_superadmin_required(current_user: Annotated[User, Depends(get_current_user)]):
+    if current_user.role not in ('admin', 'superadmin'):
+        raise HTTPException(status_code=403, detail='Admin or Superadmin only')
     
     return current_user

@@ -9,7 +9,7 @@ import os
 
 from ..core.database import get_db
 from ..schemas import auth_schema
-from ..core.auth import authenticate_user, create_access_token, get_password_hash
+from ..core.auth import authenticate_user, create_access_token, get_password_hash, get_current_user
 from ..models.models import User
 from ..core.logging_config import logger
 
@@ -75,3 +75,7 @@ def register(user: auth_schema.UserCreate, db: Session = Depends(get_db)):
     logger.info(f'User {user.email} created')
 
     return db_user
+
+@router.get('/me', response_model=auth_schema.UserOut)
+def about_me(current_user: User = Depends(get_current_user) , db: Session = Depends(get_db)):
+    return current_user
