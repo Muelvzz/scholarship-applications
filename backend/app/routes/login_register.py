@@ -43,7 +43,7 @@ async def login(
         expires_delta = access_token_expires
     )
 
-    logger.info(f'User {form_data.username} logged')
+    logger.info(f'User {user.email} logged')
 
     return {
         'access_token': access_token,
@@ -72,6 +72,6 @@ def register(user: auth_schema.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
 
-    logger.info('User {form_data.username} created')
+    logger.info(f'User {user.email} created')
 
     return db_user

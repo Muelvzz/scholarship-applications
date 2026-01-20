@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from contextlib import contextmanager
 from dotenv import load_dotenv
 import os, logging
@@ -8,6 +9,7 @@ from ..core.database import get_db, SessionLocal
 from ..core.auth import get_password_hash, super_admin_required
 from ..models.models import User
 from ..core.logging_config import logger
+from ..schemas.sadm_schema import UserOut, UserPaginationResponse, UserEdit, SuccessMessage
 
 load_dotenv()
 
@@ -68,10 +70,90 @@ def create_initial_superadmin():
 def startup():
     create_initial_superadmin()
 
-@router.get('/me')
-def get_me(current_user: User = Depends(super_admin_required)):
-    return {
-        'id': current_user.id,
-        'email': current_user.email,
-        'role': current_user.role
-    }
+@router.get('/', response_model=UserPaginationResponse)
+def view_users(
+    current_user: User = Depends(super_admin_required),
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10
+):
+    if skip < 0 or limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail='Invalid pagination parameters')
+    
+    try:
+        total = db.query(User).count()
+        users_data = db.query(User).offset(skip).limit(limit).all()
+
+        if not users_data and skip > 0:
+            raise HTTPException(status_code=404, detail='page not found')
+        
+        return {
+            'data': users_data,
+            'total': total,
+            'skip': skip,
+            'limit': limit,
+        }
+    
+    except SQLAlchemyError as e:
+        logger.error(f'Database error {str(e)}')
+        raise HTTPException(status_code=500, detail='Database error occured')
+    
+
+@router.put('/{user_id}', response_model=UserOut)
+async def update_user(
+    user_id: int,
+    update_user_data: UserEdit,
+    current_user: User = Depends(super_admin_required),
+    db: Session = Depends(get_db)
+):
+    try:
+        user_data = db.query(User).filter(User.id == user_id).first()
+        if not user_data:
+            raise HTTPException(status_code=404, detail='User not found')
+        
+        update_data = update_user_data.dict()
+
+        for field, value in update_data.items():
+            setattr(user_data, field, value)
+
+        db.commit()
+        db.refresh(user_data)
+
+        logger.info(f'User updated: {update_data['email']}')
+
+        return user_data
+
+    except HTTPException as e:
+        logger.warning(f'Updated user {user_id} failed: {e.detail}')
+
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f'Database error: {str(e)}')
+        raise HTTPException(status_code=500, detail='Database error occured')
+    
+
+@router.delete('/{user_id}', response_model=SuccessMessage)
+async def delete_user(
+    user_id: int,
+    current_user: User = Depends(super_admin_required),
+    db: Session = Depends(get_db)
+):
+    try:
+        user_data = db.query(User).filter(User.id == user_id).first()
+        if not user_data:
+            raise HTTPException(status_code=404, detail='User not found')
+        
+        db.delete(user_data)
+        db.commit()
+
+        logger.info(f'User deleted: {user_id}')
+        return {'detail': 'Scholarship Deleted'}
+    
+    except HTTPException as e:
+        logger.error(f'Deleted user {user_id} failed: {e.detail}')
+        raise
+
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f'Database error: {str(e)}')
+        raise HTTPException(status_code=500, detail='Database error occured')
