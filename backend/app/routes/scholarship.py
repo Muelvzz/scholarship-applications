@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..core.database import get_db
 from ..schemas.sch_schema import ScholarshipCreate, ScholarshipOut, ScholarshipPaginationResponse, SuccessMessage
 from ..models.models import User, Scholarships
-from ..core.auth import admin_required, super_admin_required, admin_or_superadmin_required
+from ..core.auth import admin_required, super_admin_required, admin_or_superadmin_required, get_current_user
 from ..core.logging_config import logger
 
 router = APIRouter(
@@ -66,8 +66,8 @@ async def create_scholarship(
 
 
 @router.get('/', response_model=ScholarshipPaginationResponse)
-async def read_scholarships(
-    current_user: User = Depends(super_admin_required),
+def read_scholarships(
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 10

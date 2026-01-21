@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await api.get('/admin/me', {
+            const res = await api.get('/auth/me', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
