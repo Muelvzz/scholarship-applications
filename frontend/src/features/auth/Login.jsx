@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../services/api"
-import Feedback from "../../components/Feedback"
+import Feedback from "./components/Feedback"
 import { useAuth } from "../../context/AuthContext"
 
 export default function Login() {
