@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../services/api"
 import Feedback from "../../components/Feedback"
+import { useAuth } from "../../context/AuthContext"
 
 export default function Login() {
 
@@ -13,6 +14,8 @@ export default function Login() {
     const [status, setStatus] = useState('')
     const [message, setMessage] = useState('')
 
+    const { setUser, loadUser } = useAuth()
+
     const handleEmail = (e) => {
         setEmail(() => e.target.value)
     }
@@ -21,26 +24,32 @@ export default function Login() {
         setPassword(() => e.target.value)
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
 
         try {
-            const formData = new URLSearchParams
+            const formData = new URLSearchParams()
             
             formData.append('username', email)
             formData.append('password', password)
 
             const response = await api.post('/auth/login', formData)
-            const { access_token, role } = response.data
+            const { access_token, role, user } = response.data
 
             localStorage.setItem('access_token', access_token)
             localStorage.setItem('role', role)
+
+            // Update context with user data
+            setUser(user)
 
             setEmail("")
             setPassword("")
 
             setStatus('success')
             setMessage('Login Successful')
+
+            // Load fresh user data from backend to ensure sync
+            await loadUser()
 
             if (role === 'superadmin') {
                 setTimeout(() => navigate('/superadmin'), 1500)

@@ -1,14 +1,15 @@
-import api from "../../../services/api"
+import api from "../../services/api"
 import { useState, useEffect } from "react"
-import ScholarshipModal from "../../../components/ScholarshipModal"
+import ScholarshipModal from "./components/ScholarshipModal"
 import { Link } from "react-router-dom"
 
 export default function Dashboard() {
 
     const [scholarships, setScholarships] = useState([])
     const [user, setUser] = useState(undefined)
-    const [scholarship, setScholarship] = useState(null)
     const [width, setWidth] = useState(window.innerWidth)
+    
+    const [scholarship, setScholarship] = useState(null)
     const [isSelected, setIsSelected] = useState(false)
 
     async function loadScholarships() {
@@ -19,11 +20,7 @@ export default function Dashboard() {
         }
 
         try {
-            const res = await api.get('/scholarship/', {
-                headers: {
-                    Authorization: `Bearer ${ token }`
-                }
-            })
+            const res = await api.get('/scholarship/')
 
             setScholarships(res.data.data)
         } catch ( err ) {
