@@ -13,10 +13,6 @@ export default function EditUser({ isEdit, setisEdit, user, refresh, setRefresh 
     const handleLastname = (e) => { setLastName(e.target.value) }
     const handleRole = (e) => { setRole(e.target.value) }
 
-    async function updateUser(id, userData) {
-        const res = await api.put(`/admin/${ id }`, userData)
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -34,8 +30,6 @@ export default function EditUser({ isEdit, setisEdit, user, refresh, setRefresh 
         } catch (err) {
             console.error(err.response?.data || err.message)
         }
-
-        updateUser(user.id, userData)
     }
 
     return (
@@ -51,7 +45,7 @@ export default function EditUser({ isEdit, setisEdit, user, refresh, setRefresh 
             >
                 <div
                     className={`
-                        shadow-2xl p-6 bg-white rounded-[1vw] w-4/5
+                        shadow-2xl p-6 bg-white rounded-[1vw] w-4/5 lg:w-2/5
                         transform transition-all duration-200 ease-out
                         ${ isEdit ? 'opacity-100' : 'opacity-0 scale-95' }
                         `}
@@ -64,11 +58,11 @@ export default function EditUser({ isEdit, setisEdit, user, refresh, setRefresh 
                             <input 
                                 type="email"
                                 placeholder="Email"
-                                className="w-full bg-gray-500 p-1 rounded-[0.75vw]"
+                                className="w-full bg-gray-500 p-1 rounded-[0.5vw]"
                                 value={ email } onChange={ handleEmail } required
                             />
                             <select 
-                                className="px-5 font-semibold bg-gray-500 rounded-[0.75vw]"
+                                className="px-5 font-semibold bg-gray-500 rounded-[1vw]"
                                 value={ role } onChange={ handleRole } required
                             >
                                 <option value="">-- Role --</option>
@@ -81,13 +75,13 @@ export default function EditUser({ isEdit, setisEdit, user, refresh, setRefresh 
                             <input 
                                 type="text"
                                 placeholder="First Name"
-                                className="w-full bg-gray-500 p-1 rounded-[0.75vw]"
+                                className="w-full bg-gray-500 p-1 rounded-[0.5vw]"
                                 value={ firstName } onChange={ handleFirstName } required 
                             />
                             <input 
                                 type="text"
                                 placeholder="Last Name"
-                                className="w-full bg-gray-500 p-1 rounded-[0.75vw]"
+                                className="w-full bg-gray-500 p-1 rounded-[0.5vw]"
                                 value={ lastName } onChange={ handleLastname } required 
                             />
                         </div>

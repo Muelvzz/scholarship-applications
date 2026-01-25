@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import EditUser from '../components/EditUser'
+import DeleteUser from './DeleteUser'
 
 export default function UserList({ user, idx, setRefresh, refresh }) {
 
@@ -52,6 +53,7 @@ export default function UserList({ user, idx, setRefresh, refresh }) {
                             className={`
                                 ${ imageStyle } ${ userRoleColor(user.role) } hover:bg-red-500
                             `}
+                            onClick={() => setIsDelete(true)}
                         />
                     </button>
                     <button className={`${ hoverScale }`}>
@@ -66,6 +68,14 @@ export default function UserList({ user, idx, setRefresh, refresh }) {
                     </button>
                 </div>
             </div>
+
+            { isDelete && (<DeleteUser 
+                isDelete={ isDelete }
+                setIsDelete={ setIsDelete }
+                user={ user }
+                refresh={ refresh }
+                setRefresh={ setRefresh }
+            />) }
 
             { isEdit && (<EditUser
                 isEdit={ isEdit }
