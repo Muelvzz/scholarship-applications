@@ -2,3 +2,5 @@ backend/.env
 REFACTORING_SUGGESTIONS.md
 BUG_ANALYSIS_AND_FIXES.md
 logs
+__pycache__/
+*.pyc
