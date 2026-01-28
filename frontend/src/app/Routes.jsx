@@ -14,8 +14,6 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path='/' element={ <LandingPage /> }/>
-            <Route path='/login' element={ <Login /> }/>
-            <Route path='/register' element={ <Register /> }/>
 
             <Route
                 path='/home'

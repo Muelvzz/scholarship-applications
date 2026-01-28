@@ -1,12 +1,9 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
 import api from "../../services/api"
 import Feedback from "./components/Feedback"
+import Login from "./Login"
 
-export default function Register() {
-
-    const navigate = useNavigate()
+export default function Register({ setIsRegister, setIsLogin, setUserEmail, setUserPassword }) {
 
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
@@ -16,21 +13,10 @@ export default function Register() {
     const [status, setStatus] = useState('idle')
     const [message, setMessage] = useState('')
 
-    const handleEmail = (e) => {
-        setEmail(() => e.target.value)
-    }
-
-    const handleFirstName = (e) => {
-        setFirstName(() => e.target.value)
-    }
-
-    const handleLastName = (e) => {
-        setLastName(() => e.target.value)
-    }
-
-    const handlePassword = (e) => {
-        setPassword(() => e.target.value)
-    }
+    const handleEmail = (e) => {setEmail(() => e.target.value)}
+    const handleFirstName = (e) => {setFirstName(() => e.target.value)}
+    const handleLastName = (e) => {setLastName(() => e.target.value)}
+    const handlePassword = (e) => {setPassword(() => e.target.value)}
 
     const handleSubmit = async () => {
         event.preventDefault()
@@ -53,7 +39,13 @@ export default function Register() {
             setStatus('success')
             setMessage('Registration successful! Redirecting...')
 
-            setTimeout(() => navigate('/login'), 1500)
+            setUserEmail(email)
+            setUserPassword(password)
+
+            setTimeout(() => {
+                setIsLogin(true)
+                setIsRegister(false)}
+            , 1500)
         } catch (err) {
             if (err.response?.status === 400) {
                 setStatus('error')
@@ -118,7 +110,16 @@ export default function Register() {
                             className='cursor-pointer text-white py-2 font-bold rounded-[0.5vw] text-center bg-black'
                         >Register</button>
 
-                        <Link className='hover:underline text-center font-semibold' to={ '/login' }>Already have an account?</Link>
+                        <button
+                            className='
+                                hover:underline text-center font-semibold
+                                cursor-pointer
+                                '
+                            onClick={() => {
+                                setIsLogin(true)
+                                setIsRegister(false)
+                            }}
+                        >Already have an account?</button>
                     </form>
             </div>
         </>

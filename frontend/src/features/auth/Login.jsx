@@ -4,25 +4,20 @@ import api from "../../services/api"
 import Feedback from "./components/Feedback"
 import { useAuth } from "../../context/AuthContext"
 
-export default function Login() {
+export default function Login({ userEmail, userPassword }) {
 
     const navigate = useNavigate()
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState(userEmail)
+    const [password, setPassword] = useState(userPassword)
     
     const [status, setStatus] = useState('')
     const [message, setMessage] = useState('')
 
     const { setUser, loadUser } = useAuth()
 
-    const handleEmail = (e) => {
-        setEmail(() => e.target.value)
-    }
-
-    const handlePassword = (e) => {
-        setPassword(() => e.target.value)
-    }
+    const handleEmail = (e) => {setEmail(() => e.target.value)}
+    const handlePassword = (e) => {setPassword(() => e.target.value)}
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -66,10 +61,12 @@ export default function Login() {
     return (
         <>
             <div>
-                <Feedback 
-                    status={ status }
-                    message={ message }
-                />
+                <div>
+                    <Feedback 
+                        status={ status }
+                        message={ message }
+                    />
+                </div>
                 <form 
                     className='flex flex-col bg-white py-5 px-5 rounded-[0.5vw] border-2 w-2xl gap-y-3'
                     onSubmit={ handleSubmit }
