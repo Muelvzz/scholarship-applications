@@ -67,7 +67,6 @@ export default function Register() {
 
     return (
         <>
-            <div className='flex flex-col h-screen bg-gray-800 items-center justify-center'>
                 <div>
                     <Feedback 
                         status={ status }
@@ -121,7 +120,6 @@ export default function Register() {
 
                         <Link className='hover:underline text-center font-semibold' to={ '/login' }>Already have an account?</Link>
                     </form>
-                </div>
             </div>
         </>
     )
