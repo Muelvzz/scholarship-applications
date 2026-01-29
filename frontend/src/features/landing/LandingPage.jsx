@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Login from '../features/auth/Login'
-import Register from '../features/auth/Register'
-import LandingNavBar from '../components/LandingNavBar'
+import Login from '../auth/Login'
+import Register from '../auth/Register'
+import LandingNavBar from './components/LandingNavBar'
 
 export default function LandingPage() {
 

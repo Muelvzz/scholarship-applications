@@ -1,8 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 
-import LandingPage from '../features/LandingPage'
-import Login from '../features/auth/Login'
-import Register from '../features/auth/Register'
+import LandingPage from '../features/landing/LandingPage'
 import Dashboard from '../features/scholarships/Dashboard'
 
 import ProtectedRoute from '../features/auth/authorization/ProtectedRoute'
