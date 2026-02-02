@@ -99,6 +99,36 @@ def view_users(
         raise HTTPException(status_code=500, detail='Database error occured')
     
 
+@router.get('/{role}', response_model=UserPaginationResponse)
+def select_users(
+    role: str,
+    current_user: User = Depends(super_admin_required),
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10
+):
+    if skip < 0 or limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail='Invalid pagination parameters')
+    
+    try:
+        total = db.query(User).count()
+        users_data = db.query(User).filter(User.role == role).all()
+
+        if not users_data and skip > 0:
+            raise HTTPException(status_code=404, detail='page not found')
+        
+        return {
+            'data': users_data,
+            'total': total,
+            'skip': skip,
+            'limit': limit
+        }
+    
+    except SQLAlchemyError as e:
+        logger.error(f'Database error {str(e)}')
+        raise HTTPException(status_code=500, detail='Database error occured')
+    
+
 @router.put('/{user_id}', response_model=UserOut)
 async def update_user(
     user_id: int,
