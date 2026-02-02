@@ -111,7 +111,7 @@ def select_users(
         raise HTTPException(status_code=400, detail='Invalid pagination parameters')
     
     try:
-        total = db.query(User).count()
+        total = db.query(User).filter(User.role == role).count()
         users_data = db.query(User).filter(User.role == role).all()
 
         if not users_data and skip > 0:

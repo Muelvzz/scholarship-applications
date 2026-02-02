@@ -16,14 +16,25 @@ export default function SuperAdmin() {
 
     const [filter, setFilter] = useState('all')
 
+    const getFilteredUser = async (filter) => {
+        const res = await api.get(`/admin/${ filter }`)
+
+        setTotal(res.data.total)
+        setUserList(res.data.data)
+    }
+
     async function loadUserList() {
         const token = localStorage.getItem('access_token')
 
         try {
-            const res = await api.get('/admin/')
+            if (filter !== 'all') {
+                getFilteredUser(filter)
+            } else {
+                const res = await api.get('/admin/')
 
-            setTotal(res.data.total)
-            setUserList(res.data.data)
+                setTotal(res.data.total)
+                setUserList(res.data.data)
+            }
         } catch (err) {
             console.error(err)
         }
@@ -53,6 +64,7 @@ export default function SuperAdmin() {
                 <UserFilter
                     filter={ filter }
                     setFilter={ setFilter }
+                    setRefresh={ setRefresh }
                     total={ total }
                 />
                 <UserCard 

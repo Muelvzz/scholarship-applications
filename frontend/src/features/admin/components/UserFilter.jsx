@@ -1,4 +1,4 @@
-export default function UserFilter({ filter, setFilter, total }) {
+export default function UserFilter({ filter, setFilter, setRefresh, total }) {
 
     const isAll = Boolean(filter === 'all')
     const isAdmin = Boolean(filter === 'admin')
@@ -18,15 +18,24 @@ export default function UserFilter({ filter, setFilter, total }) {
                 ">
                     <button 
                         className={`${buttonFilterStyle} ${isAll && ('bg-[#e94f37]')}`}
-                        onClick={() => setFilter('all')}
+                        onClick={() => {
+                            setFilter('all')
+                            setRefresh((prev) => !prev)
+                        }}
                     >All</button>
                     <button 
                         className={`${buttonFilterStyle} ${isAdmin && ('bg-[#e94f37]')}`}
-                        onClick={() => setFilter('admin')}
+                        onClick={() => {
+                            setFilter('admin')
+                            setRefresh((prev) => !prev)
+                        }}
                     >Admin</button>
                     <button
                         className={`${buttonFilterStyle} ${isUser && ('bg-[#e94f37]')}`}
-                        onClick={() => setFilter('user')}
+                        onClick={() => {
+                            setFilter('user')
+                            setRefresh((prev) => !prev)
+                        }}
                     >User</button>
                 </div>
                 <div>Total: { total }</div>
