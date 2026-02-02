@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react"
-import AdminUse from "./components/AdminUse"
-import UserList from "./components/UserList"
 import api from '../../services/api.js'
-import Dashboard from '../scholarships/Dashboard.jsx'
+
+import MainNavBar from '../landing/components/MainNavBar.jsx'
+import UserTab from './components/UserTab.jsx'
+import UserFilter from "./components/UserFilter.jsx"
+import UserCard from "./components/UserCard.jsx"
 
 export default function SuperAdmin() {
 
     const [userList, setUserList] = useState([])
+    const [total, setTotal] = useState(0)
+
     const [width, setWidth] = useState(window.innerWidth)
     const [refresh, setRefresh] = useState(false)
-    const [isAdmin, setIsAdmin] = useState(true)
+
+    const [filter, setFilter] = useState('all')
 
     async function loadUserList() {
         const token = localStorage.getItem('access_token')
@@ -17,6 +22,7 @@ export default function SuperAdmin() {
         try {
             const res = await api.get('/admin/')
 
+            setTotal(res.data.total)
             setUserList(res.data.data)
         } catch (err) {
             console.error(err)
@@ -34,36 +40,25 @@ export default function SuperAdmin() {
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
-    const showAdminUse = width >= 1032
-
     return (
         <>
+            <MainNavBar />
+
             <div className="
-                min-h-screen flex flex-col
-                bg-gray-800 p-5
-                justify-start items-center
-            ">
-                <div><button onClick={() => setIsAdmin(!isAdmin)}>{ isAdmin ? 'Show Scholarships' : 'Show Users' }</button></div>
-
-                {isAdmin ? (
-                    <div
-                        className="flex flex-col gap-y-3 lg:w-3/5"
-                    >
-                        {userList.flatMap((user, idx) => (
-                            user.role !== 'superadmin' ?  <UserList 
-                                user={ user }
-                                idx={ idx }
-                                setRefresh={ setRefresh }
-                                refresh={ refresh }
-                            /> : ''
-                        ))}
-                    </div>
-                ) : <Dashboard />}
-
+                bg-[#393E41] min-h-screen
+                py-5 px-10 text-white"
+            >
+                <UserTab 
+                />
+                <UserFilter
+                    filter={ filter }
+                    setFilter={ setFilter }
+                    total={ total }
+                />
+                <UserCard 
+                    userList={ userList }
+                />
             </div>
         </>
     )
 }
-
-// Suggested Feature:
-// Add layout options
