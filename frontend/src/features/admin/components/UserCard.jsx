@@ -1,9 +1,11 @@
 import { useState } from "react"
 import UserUpdate from "./UserUpdate"
+import UserDelete from "./UserDelete"
 
-export default function UserCard({ userList, setRefresh, width }) {
+export default function UserCard({ userList, setRefresh, remove }) {
 
     const [update, setUpdate] = useState(false)
+
     const [userData, setUserData] = useState('')
     const [userIndex, setUserIndex] = useState(null)
 
@@ -27,18 +29,24 @@ export default function UserCard({ userList, setRefresh, width }) {
                                         <div className="font-bold">{`${user.first_name} ${user.last_name}`}</div>
                                         <div className="italic">{ user.email }</div>
                                     </div>
-                                    <button onClick={() => {
-                                        setUpdate(prev => !prev), 
-                                        setUserData(user),
-                                        setUserIndex(idx)}}
-                                    >
-                                        <img 
-                                            src={ !update ? '/edit.png' : '/close.png' } alt="Edit Icon"
-                                            className="
-                                                w-11 rounded-lg p-1 duration-300 
-                                                hover:bg-white focus:bg-white active:bg-white" 
-                                        />
-                                    </button>
+
+                                    {!remove ? (
+                                        <button onClick={() => {
+                                            setUpdate(prev => !prev), 
+                                            setUserData(user),
+                                            setUserIndex(idx)}}
+                                        >
+                                            <img 
+                                                src={ !update ? '/edit.png' : '/close.png' } alt="Edit Icon"
+                                                className="
+                                                    w-11 rounded-lg p-1 duration-300 
+                                                    hover:bg-white focus:bg-white active:bg-white" 
+                                            />
+                                        </button>
+                                    ) : (<UserDelete 
+                                        user={ user }
+                                        setRefresh={ setRefresh }
+                                    />)}
                                 </div>
 
                                 {update && userIndex === idx && (
@@ -46,7 +54,6 @@ export default function UserCard({ userList, setRefresh, width }) {
                                         userData={ userData }
                                         setRefresh={ setRefresh }
                                         setUpdate={ setUpdate }
-                                        width={ width }
                                     />)}
                                 <hr />
                             </div>

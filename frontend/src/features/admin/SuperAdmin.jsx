@@ -15,6 +15,7 @@ export default function SuperAdmin() {
     const [refresh, setRefresh] = useState(false)
 
     const [filter, setFilter] = useState('all')
+    const [remove, setRemove] = useState(false)
 
     const getFilteredUser = async (filter) => {
         const res = await api.get(`/admin/${ filter }`)
@@ -61,6 +62,8 @@ export default function SuperAdmin() {
                 text-white"
             >
                 <UserTab 
+                    remove={ remove }
+                    setRemove={ setRemove }
                 />
                 <UserFilter
                     filter={ filter }
@@ -70,7 +73,7 @@ export default function SuperAdmin() {
                 />
                 <UserCard 
                     userList={ userList }
-                    width={ width }
+                    remove={ remove }
                     setRefresh={ setRefresh }
                 />
             </div>
