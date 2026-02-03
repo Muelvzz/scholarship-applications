@@ -57,7 +57,8 @@ export default function SuperAdmin() {
 
             <div className="
                 bg-[#393E41] min-h-screen
-                py-5 px-10 text-white"
+                py-5 sm:px-2 md:px-6 lg:px-10 
+                text-white"
             >
                 <UserTab 
                 />
@@ -69,6 +70,8 @@ export default function SuperAdmin() {
                 />
                 <UserCard 
                     userList={ userList }
+                    width={ width }
+                    setRefresh={ setRefresh }
                 />
             </div>
         </>

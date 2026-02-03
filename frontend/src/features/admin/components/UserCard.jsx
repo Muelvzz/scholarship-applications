@@ -1,17 +1,24 @@
-export default function UserCard({ userList }) {
+import { useState } from "react"
+import UserUpdate from "./UserUpdate"
+
+export default function UserCard({ userList, setRefresh, width }) {
+
+    const [update, setUpdate] = useState(false)
+    const [userData, setUserData] = useState('')
+    const [userIndex, setUserIndex] = useState(null)
+
     return (
         <>
             <div className="
-                px-10 flex flex-col mt-5
+                sm:px-10 flex flex-col mt-5
             ">
                 <div>
                     {userList.map((user, idx) => (
                         <div key={ idx }>
                             <div 
-                                className="
-                                    cursor-pointer duration-300 hover:font-bold
-                                    hover:bg-[#2b3033]
-                                ">
+                                className={`
+                                    cursor-pointer duration-300 hover:font-bold hover:bg-[#2b3033]
+                                `}>
                                 <div className="
                                     p-3 flex justify-between
                                     items-center
@@ -20,16 +27,27 @@ export default function UserCard({ userList }) {
                                         <div className="font-bold">{`${user.first_name} ${user.last_name}`}</div>
                                         <div className="italic">{ user.email }</div>
                                     </div>
-                                    <button>
+                                    <button onClick={() => {
+                                        setUpdate(prev => !prev), 
+                                        setUserData(user),
+                                        setUserIndex(idx)}}
+                                    >
                                         <img 
-                                            src="/edit.png" alt="Edit Icon"
+                                            src={ !update ? '/edit.png' : '/close.png' } alt="Edit Icon"
                                             className="
-                                                w-11 rounded-lg p-1
-                                                duration-300 hover:bg-white focus:bg-white
-                                                active:bg-white" 
+                                                w-11 rounded-lg p-1 duration-300 
+                                                hover:bg-white focus:bg-white active:bg-white" 
                                         />
                                     </button>
                                 </div>
+
+                                {update && userIndex === idx && (
+                                    <UserUpdate
+                                        userData={ userData }
+                                        setRefresh={ setRefresh }
+                                        setUpdate={ setUpdate }
+                                        width={ width }
+                                    />)}
                                 <hr />
                             </div>
                         </div>

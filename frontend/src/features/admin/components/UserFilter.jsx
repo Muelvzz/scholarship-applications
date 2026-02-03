@@ -14,7 +14,6 @@ export default function UserFilter({ filter, setFilter, setRefresh, total }) {
             ">
                 <div className="
                     flex font-medium text-lg
-                    gap-x-5
                 ">
                     <button 
                         className={`${buttonFilterStyle} ${isAll && ('bg-[#e94f37]')}`}

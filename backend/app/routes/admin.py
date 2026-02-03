@@ -81,8 +81,8 @@ def view_users(
         raise HTTPException(status_code=400, detail='Invalid pagination parameters')
 
     try:
-        total = db.query(User).count()
-        users_data = db.query(User).offset(skip).limit(limit).all()
+        total = db.query(User).filter(User.role != 'superadmin').count()
+        users_data = db.query(User).filter(User.role != 'superadmin').offset(skip).limit(limit).all()
 
         if not users_data and skip > 0:
             raise HTTPException(status_code=404, detail='page not found')
