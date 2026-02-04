@@ -48,7 +48,9 @@ export default function Login({ userEmail, userPassword }) {
 
             if (role === 'superadmin') {
                 setTimeout(() => navigate('/superadmin'), 1500)
-            } else {
+            } else if (role === 'admin') {
+                setTimeout(() => navigate('/admin'), 1500)
+            }else {
                 setTimeout(() => navigate('/home'), 1500)
             }
 

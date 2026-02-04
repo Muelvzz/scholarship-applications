@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
-export default function AdminRoute ({ children }) {
+export default function SuperAdminRoute ({ children }) {
     const { user } = useAuth();
 
     // Show loading state while checking authentication
@@ -14,8 +14,8 @@ export default function AdminRoute ({ children }) {
         return <Navigate to='/' replace/>
     }
 
-    // Redirect if not admin
-    if (user.role !== 'admin') {
+    // Redirect if not superadmin
+    if (user.role !== 'superadmin') {
         return <Navigate to='/' replace/>
     }
 

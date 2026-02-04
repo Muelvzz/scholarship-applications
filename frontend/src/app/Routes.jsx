@@ -5,8 +5,10 @@ import Dashboard from '../features/scholarships/Dashboard'
 
 import ProtectedRoute from '../features/auth/authorization/ProtectedRoute'
 import AdminRoute from '../features/auth/authorization/AdminRoute'
+import SuperAdminRoute from '../features/auth/authorization/SuperAdminRoute'
 
-import SuperAdmin from '../features/admin/SuperAdmin'
+import SuperAdmin from '../features/user/superadmin/SuperAdmin'
+import Admin from '../features/user/admin/Admin'
 
 export default function AppRoutes() {
     return (
@@ -23,11 +25,20 @@ export default function AppRoutes() {
             />
 
             <Route
-                path='/superadmin'
+                path='/admin'
                 element={
                     <AdminRoute>
-                        <SuperAdmin />
+                        <Admin />
                     </AdminRoute>
+                }
+            />
+
+            <Route
+                path='/superadmin'
+                element={
+                    <SuperAdminRoute>
+                        <SuperAdmin />
+                    </SuperAdminRoute>
                 }
             />
         </Routes>

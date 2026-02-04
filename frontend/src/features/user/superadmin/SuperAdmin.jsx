@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
-import api from '../../services/api.js'
+import api from '../../../services/api.js'
 
-import MainNavBar from '../landing/components/MainNavBar.jsx'
+import MainNavBar from '../../landing/components/MainNavBar.jsx'
 import UserTab from './components/UserTab.jsx'
 import UserFilter from "./components/UserFilter.jsx"
 import UserCard from "./components/UserCard.jsx"
+import VerticalTab from '../components/VerticalTab.jsx'
 
 export default function SuperAdmin() {
 
@@ -57,25 +58,29 @@ export default function SuperAdmin() {
             <MainNavBar />
 
             <div className="
-                bg-[#393E41] min-h-screen
-                py-5 sm:px-2 md:px-6 lg:px-10 
-                text-white"
-            >
-                <UserTab 
-                    remove={ remove }
-                    setRemove={ setRemove }
-                />
-                <UserFilter
-                    filter={ filter }
-                    setFilter={ setFilter }
-                    setRefresh={ setRefresh }
-                    total={ total }
-                />
-                <UserCard 
-                    userList={ userList }
-                    remove={ remove }
-                    setRefresh={ setRefresh }
-                />
+                flex bg-[#393E41] min-h-screen 
+                py-5 sm:pr-2 md:pr-6 lg:pr-10 
+                sm:pl-3 md:pl-3 lg:pl-3
+                gap-5 flex-col lg:flex-row
+            ">
+                <VerticalTab />
+                <div className="w-full text-white">
+                    <UserTab 
+                        remove={ remove }
+                        setRemove={ setRemove }
+                    />
+                    <UserFilter
+                        filter={ filter }
+                        setFilter={ setFilter }
+                        setRefresh={ setRefresh }
+                        total={ total }
+                    />
+                    <UserCard 
+                        userList={ userList }
+                        remove={ remove }
+                        setRefresh={ setRefresh }
+                    />
+                </div>
             </div>
         </>
     )

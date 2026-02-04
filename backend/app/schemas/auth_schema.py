@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from .sch_schema import ScholarshipOut
 
 class Token(BaseModel):
     access_token: str
@@ -27,6 +28,7 @@ class UserOut(BaseModel):
     last_name: str
     role: str
     created_at: datetime
+    scholarship: list[ScholarshipOut] | None = None
 
     class Config:
         from_attributes = True
