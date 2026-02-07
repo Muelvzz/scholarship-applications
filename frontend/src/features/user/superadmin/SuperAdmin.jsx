@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
 import api from '../../../services/api.js'
 
-import MainNavBar from '../../landing/components/MainNavBar.jsx'
-import UserTab from './components/UserTab.jsx'
-import UserFilter from "./components/UserFilter.jsx"
-import UserCard from "./components/UserCard.jsx"
+import Dashboard from '../../scholarships/Dashboard.jsx'
+import SuperAdminMain from "./components/SuperAdminMain.jsx"
+import CreateScholarship from "../components/CreateScholarship.jsx"
+
 import VerticalTab from '../components/VerticalTab.jsx'
 
 export default function SuperAdmin() {
@@ -17,6 +17,8 @@ export default function SuperAdmin() {
 
     const [filter, setFilter] = useState('all')
     const [remove, setRemove] = useState(false)
+
+    const [verticalTab, setVerticalTab] = useState([false, false, true, false])
 
     const getFilteredUser = async (filter) => {
         const res = await api.get(`/admin/${ filter }`)
@@ -55,7 +57,6 @@ export default function SuperAdmin() {
 
     return (
         <>
-            <MainNavBar />
 
             <div className="
                 flex bg-[#393E41] min-h-screen 
@@ -63,23 +64,31 @@ export default function SuperAdmin() {
                 sm:pl-3 md:pl-3 lg:pl-3
                 gap-5 flex-col lg:flex-row
             ">
-                <VerticalTab />
+                <VerticalTab 
+                    verticalTab={ verticalTab }
+                    setVerticalTab={ setVerticalTab }
+                />
                 <div className="w-full text-white">
-                    <UserTab 
-                        remove={ remove }
-                        setRemove={ setRemove }
-                    />
-                    <UserFilter
-                        filter={ filter }
-                        setFilter={ setFilter }
-                        setRefresh={ setRefresh }
-                        total={ total }
-                    />
-                    <UserCard 
-                        userList={ userList }
-                        remove={ remove }
-                        setRefresh={ setRefresh }
-                    />
+                    { verticalTab[0] && (
+                        <CreateScholarship />
+                    ) }
+                    { verticalTab[1] && (
+                        <Dashboard />
+                    ) }
+
+                    { verticalTab[2] && (
+                        <SuperAdminMain
+                            remove={ remove }
+                            setRemove={ setRemove }
+                            filter={ filter }
+                            setFilter={ setFilter }
+                            setRefresh={ setRefresh }
+                            total={ total }
+                            userList={ userList }
+                        />
+                    ) }
+
+                    { verticalTab[3] && ('') }
                 </div>
             </div>
         </>

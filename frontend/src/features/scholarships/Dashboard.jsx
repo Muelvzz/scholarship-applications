@@ -1,6 +1,5 @@
 import api from "../../services/api"
 import { useState, useEffect } from "react"
-import MainNavBar from '../landing/components/MainNavBar'
 
 import ScholarshipTab from "./components/ScholarshipTab"
 import ScholarshipCard from "./components/ScholarshipCard"
@@ -45,7 +44,6 @@ export default function Dashboard() {
 
     return (
         <>
-            <MainNavBar />
 
             <div className="
                 bg-[#393E41] min-h-screen 

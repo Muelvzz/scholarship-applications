@@ -6,6 +6,7 @@ import Dashboard from '../features/scholarships/Dashboard'
 import ProtectedRoute from '../features/auth/authorization/ProtectedRoute'
 import AdminRoute from '../features/auth/authorization/AdminRoute'
 import SuperAdminRoute from '../features/auth/authorization/SuperAdminRoute'
+import MainNavBar from '../features/landing/components/MainNavBar'
 
 import SuperAdmin from '../features/user/superadmin/SuperAdmin'
 import Admin from '../features/user/admin/Admin'
@@ -19,6 +20,7 @@ export default function AppRoutes() {
                 path='/home'
                 element={
                     <ProtectedRoute>
+                        <MainNavBar/>
                         <Dashboard />
                     </ProtectedRoute>
                 }
@@ -28,6 +30,7 @@ export default function AppRoutes() {
                 path='/admin'
                 element={
                     <AdminRoute>
+                        <MainNavBar/>
                         <Admin />
                     </AdminRoute>
                 }
@@ -37,6 +40,7 @@ export default function AppRoutes() {
                 path='/superadmin'
                 element={
                     <SuperAdminRoute>
+                        <MainNavBar/>
                         <SuperAdmin />
                     </SuperAdminRoute>
                 }
